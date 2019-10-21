@@ -6,9 +6,36 @@
 
   	function showItemTable($link) 
   	{
-	  	$query = "SELECT * FROM items";
+
+
+
+  		if(isset($_GET['page'])){
+  		$page = $_GET['page'];
+  	}else {
+  		$page = 1;
+  	}
+  		$notesOnPage = 3;
+  		$from = ($page - 1) * $notesOnPage;
+
+  		$query = "SELECT * FROM items WHERE id>0 limit $from, $notesOnPage";
 	  	$result = mysqli_query($link, $query) or die(mysqli_error($link));
 	  	for ($data = []; $row = mysqli_fetch_assoc($result); $data[] = $row);
+  		
+
+
+	$query = "SELECT COUNT(*) as count FROM items";
+	$result = mysqli_query($link, $query) or die(mysqli_error($link));
+	$count = mysqli_fetch_assoc($result)['count'];
+	$pagesCount = ceil($count / $notesOnPage);
+	
+
+
+
+
+
+	  	// $query = "SELECT * FROM items";
+	  	// $result = mysqli_query($link, $query) or die(mysqli_error($link));
+	  	// for ($data = []; $row = mysqli_fetch_assoc($result); $data[] = $row);
 
 
 		$content = '<table>
@@ -35,14 +62,22 @@
 			$content .= '<br><br><a href="add.php">Добавить задачу</a><br><br>';
 			include 'elems/menu.php';
 			include 'layout.php';
+
+
+			for ($i = 1; $i<= $pagesCount; $i++) {
+	echo "<a href=\"?page=$i\">$i</a>";
+}
   	}
 
 
-  	
+
+
 		showItemTable($link);
 
 
 ?>
+
+
 
 
 
