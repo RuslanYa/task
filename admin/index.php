@@ -7,9 +7,35 @@ if (!empty($_SESSION['auth']))
 
   	function showItemTable($link, $info ='') 
   	{
-	  	$query = "SELECT * FROM items";
+
+
+  		if(isset($_GET['page'])){
+  		$page = $_GET['page'];
+  	}else {
+  		$page = 1;
+  	}
+  		$notesOnPage = 3;
+  		$from = ($page - 1) * $notesOnPage;
+
+  		$query = "SELECT * FROM items WHERE id>0 limit $from, $notesOnPage";
 	  	$result = mysqli_query($link, $query) or die(mysqli_error($link));
 	  	for ($data = []; $row = mysqli_fetch_assoc($result); $data[] = $row);
+  		
+
+
+	$query = "SELECT COUNT(*) as count FROM items";
+	$result = mysqli_query($link, $query) or die(mysqli_error($link));
+	$count = mysqli_fetch_assoc($result)['count'];
+	$pagesCount = ceil($count / $notesOnPage);
+
+
+		
+
+
+
+	  	// $query = "SELECT * FROM items";
+	  	// $result = mysqli_query($link, $query) or die(mysqli_error($link));
+	  	// for ($data = []; $row = mysqli_fetch_assoc($result); $data[] = $row);
 
 
 		$content = '<table>
@@ -38,6 +64,12 @@ if (!empty($_SESSION['auth']))
 			$content .= '<a href="add.php">Добавить задачу</a>';
 			include '../elems/admin_menu.php';
 			include 'layout.php';
+
+			echo '<br>';
+	for ($i = 1; $i<= $pagesCount; $i++) {
+	echo "<a href=\"?page=$i\">$i</a>";
+}
+
   	}
 
 
@@ -56,24 +88,8 @@ if (!empty($_SESSION['auth']))
   	
 
 
- //  	while ($row = mysqli_fetch_assoc($result)) {
- //        var_dump($row) ;
- //    }
 
 
-
-
-	// $page = $_GET['page'] ? $_GET['page'] : 'index';
-	// $path = "pages/{$page}.php";
-
-
-	// if (file_exists($path)){
-	// $content = file_get_contents($path);
-	// // header("HTTP/1.0 404 Not Found");
-	// } else {
-	// 	$content =  'file not found';
-	// 	$title = 'File not found';
-	// }
   		$info = '';
   		if (deleteItem($link)) {
   			$info = '<p>Запись  удалена.</p>';

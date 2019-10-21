@@ -10,9 +10,9 @@
  <body>
  	<div class="container">
 	 	 <?php echo isset($info) ? $info : ''; ?>
-		<br>
+		
 		<?php echo $content; ?>
-		<br>
+		
 	</div>
  </body>
 </html>
